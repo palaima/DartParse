@@ -1,0 +1,5 @@
+name: test_dart
+dependencies:
+  http: any
+  json_object: any
+  browser: any

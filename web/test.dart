@@ -1,0 +1,8 @@
+class test {
+  hello() {
+
+  }
+
+  test() {
+  }
+}
