@@ -1,4 +1,11 @@
 name: test_dart
+version: 0.0.1
+author: Mantas Palaima <palaima.mantas@gmail.com>
+description: A Dart client for the Parse REST API.
+homepage: https://github.com/palaima/DartParse
+dev_dependencies:
+  unittest: '>=0.11.0'
+  matcher: '>=0.11.0'
 dependencies:
   http: any
   json_object: any

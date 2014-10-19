@@ -39,13 +39,21 @@ main() {
     ..whereEqualTo("","")
     ..whereEqualTo("","");
   query.find().then((List<ParseObject> results) {
-    results.forEach((result) {
+    results.forEach((ParseObject result) {
+      print("===============================================");
       print("objectId: " + result.objectId);
       print("createdAt: " + result.createdAt.toString());
       print("updatedAt: " + result.updatedAt.toString());
+      if (result.has("array")) {
+        List array = result.getList("array");
+        array.forEach((val) {
+          print("value: $val");
+        });
+      }
       result.data.forEach((k,v) {
         print("$k: $v");
       });
+      print("===============================================");
     });
     /*print("json " + result.getJsonObject().toString());
     print("json " + json[0]);*/

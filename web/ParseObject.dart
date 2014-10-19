@@ -29,6 +29,55 @@ class ParseObject {
   String get getObjectId => objectId;
   String get getClassName => className;
 
+  DateTime getDate(String key) {
+    if (data.containsKey(key) && data[key] is DateTime) {
+      return data[key];
+    }
+    return null;
+  }
+
+  bool getBoolean(String key) {
+    if (data.containsKey(key) && data[key] is bool) {
+      return data[key];
+    }
+    return null;
+  }
+
+  num getNumber(String key) {
+    if (data.containsKey(key) && data[key] is num) {
+      return data[key];
+    }
+    return null;
+  }
+
+  int getInt(String key) {
+    if (data.containsKey(key) && data[key] is int) {
+      return data[key];
+    }
+    return null;
+  }
+
+  double getDouble(String key) {
+    if (data.containsKey(key) && data[key] is double) {
+      return data[key];
+    }
+    return null;
+  }
+
+  String getString(String key) {
+    if (data.containsKey(key) && data[key] is String) {
+      return data[key];
+    }
+    return null;
+  }
+
+  List getList(String key) {
+    if (data.containsKey(key) && data[key] is List) {
+      return data[key];
+    }
+    return null;
+  }
+
   setData(Map result, [bool disableChecks]) {
     result.forEach((key, value) {
       if(Parse.isInvalidKey(key)) {
@@ -54,7 +103,7 @@ class ParseObject {
       throw new ArgumentError("value may not be null.");
     }
 
-    if(value is ParseObject && value.isDirty) {
+    if (value is ParseObject && value.isDirty) {
       throw new ArgumentError("ParseFile must be saved before being set on a ParseObject.");
     }
 
@@ -63,7 +112,7 @@ class ParseObject {
     "ParseFile must be saved before being set on a ParseObject.");
     }*/
 
-    if(Parse.isInvalidKey(key)) {
+    if (Parse.isInvalidKey(key)) {
       throw new ArgumentError("reserved value for key: " + key);
     }
 
@@ -78,13 +127,13 @@ class ParseObject {
   performOperation(String key, ParseFieldOperation operation) {
 
     //if field already exist, remove field and any pending operation for that field
-    if(has(key)) {
+    if (has(key)) {
       operations.remove(key);
       data.remove(key);
     }
 
     Object value = operation.apply(null, this, key);
-    if(value != null) {
+    if (value != null) {
       data.putIfAbsent(key, ()=> value);
     }
     else {
@@ -97,13 +146,13 @@ class ParseObject {
   }
 
   setReservedKey(String key, Object value) {
-    if("objectId" == key) {
+    if ("objectId" == key) {
       objectId = value.toString();
     }
-    else if("createdAt" == key) {
+    else if ("createdAt" == key) {
       createdAt = Parse.parseDate(value.toString());
     }
-    else if("updatedAt" == key) {
+    else if ("updatedAt" == key) {
       updatedAt = Parse.parseDate(value.toString());
     }
   }
