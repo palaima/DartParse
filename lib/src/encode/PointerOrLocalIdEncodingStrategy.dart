@@ -2,6 +2,8 @@ part of dart_parse;
 
 class PointerOrLocalIdEncodingStrategy extends ParseObjectEncodingStrategy {
 
+  final Logger log = new Logger("PointerOrLocalIdEncodingStrategy");
+
   JsonObject encodeRelatedObject(ParseObject parseObject) {
     JsonObject json = new JsonObject();
     try {
@@ -15,7 +17,7 @@ class PointerOrLocalIdEncodingStrategy extends ParseObjectEncodingStrategy {
         json.putIfAbsent("localId", () => createTempId());
       }
     } on JsonObjectException catch (e) {
-      print(e);
+      log.shout(e);
     }
     return json;
   }

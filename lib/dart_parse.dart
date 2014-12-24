@@ -3,6 +3,7 @@ library dart_parse;
 import 'package:http/http.dart';
 import 'package:json_object/json_object.dart';
 import 'package:http/http.dart' as http;
+import 'package:logging/logging.dart';
 
 import 'dart:convert';
 import 'dart:math';

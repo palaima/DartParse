@@ -2,6 +2,8 @@ part of dart_parse;
 
 class ParseQuery<T extends ParseObject> {
 
+  final Logger log = new Logger("ParseQuery");
+
   String endpoint;
   String className;
   int skip = 0;
@@ -20,7 +22,6 @@ class ParseQuery<T extends ParseObject> {
     var completer = new Completer();
     find().then((List<T> results){
       if (results.length > 0) {
-        print(" dgsd " + results[0]);
         completer.complete(results[0]);
       }
     });
@@ -58,11 +59,11 @@ class ParseQuery<T extends ParseObject> {
           parseObject.setData(resultMap, false);
           parseObjects.add(parseObject);
 
-          print(" result " + resultMap.toString());
+          log.info(" result " + resultMap.toString());
           int rez = resultMap["code"];
-          print("code: " + rez.toString());
+          log.info("code: " + rez.toString());
           resultMap.forEach((k,v) {
-            print("$k: $v");
+            log.info("$k: $v");
           });
         });
 
@@ -112,7 +113,7 @@ class ParseQuery<T extends ParseObject> {
       }*/
 
     } on JsonObjectException catch (e) {
-      print(e);
+      log.shout(e);
     }
 
     return params;

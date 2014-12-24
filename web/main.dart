@@ -13,7 +13,7 @@ import 'package:dart_parse/dart_parse.dart';
 
 
 main() {
-
+/*
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((LogRecord rec) {
     print('${rec.level.name}: ${rec.loggerName}: ${rec.time}: ${rec.message}');
@@ -64,7 +64,5 @@ main() {
         });
         log.fine("===============================================");
       });
-      /*print("json " + result.getJsonObject().toString());
-      print("json " + json[0]);*/
-    });
+    });*/
 }
