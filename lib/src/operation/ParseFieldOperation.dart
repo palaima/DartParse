@@ -1,5 +1,4 @@
-import '../ParseObject.dart';
-import '../encode/ParseObjectEncodingStrategy.dart';
+part of dart_parse;
 
 abstract class ParseFieldOperation {
   Object apply(Object oldValue, ParseObject parseObject, String key);

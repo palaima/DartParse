@@ -1,5 +1,4 @@
-import 'package:json_object/json_object.dart';
-import '../ParseObject.dart';
+part of dart_parse;
 
 abstract class ParseObjectEncodingStrategy {
   JsonObject encodeRelatedObject(ParseObject parseObject);

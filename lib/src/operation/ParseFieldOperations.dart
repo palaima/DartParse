@@ -1,6 +1,4 @@
-import '../ParseObject.dart';
-import '../encode/ParseObjectEncodingStrategy.dart';
-import 'ParseFieldOperation.dart';
+part of dart_parse;
 
 class ParseFieldOperations {
   static ParseFieldOperation decode(Map encoded) {

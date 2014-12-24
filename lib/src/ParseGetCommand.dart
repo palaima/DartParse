@@ -1,4 +1,4 @@
-import 'ParseCommand.dart';
+part of dart_parse;
 
 class ParseGetCommand extends ParseCommand {
 

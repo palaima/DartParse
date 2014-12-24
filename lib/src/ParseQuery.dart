@@ -1,13 +1,4 @@
-import "dart:async";
-
-
-import 'package:json_object/json_object.dart';
-
-import 'ParseGetCommand.dart';
-import 'ParseResponse.dart';
-import 'ParseObject.dart';
-import 'util/ParseEncoder.dart';
-import 'encode/PointerEncodingStrategy.dart';
+part of dart_parse;
 
 class ParseQuery<T extends ParseObject> {
 

@@ -1,7 +1,4 @@
-import 'ParseObjectEncodingStrategy.dart';
-import 'package:json_object/json_object.dart';
-import '../ParseObject.dart';
-import 'dart:math';
+part of dart_parse;
 
 class PointerOrLocalIdEncodingStrategy extends ParseObjectEncodingStrategy {
 

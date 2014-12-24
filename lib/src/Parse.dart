@@ -1,5 +1,4 @@
-import 'ParseObject.dart';
-import 'package:json_object/json_object.dart';
+part of dart_parse;
 
 class Parse {
 

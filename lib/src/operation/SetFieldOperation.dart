@@ -1,7 +1,4 @@
-import 'ParseFieldOperation.dart';
-import '../ParseObject.dart';
-import '../encode/ParseObjectEncodingStrategy.dart';
-import '../util/ParseEncoder.dart';
+part of dart_parse;
 
 class SetFieldOperation extends ParseFieldOperation {
   Object value;

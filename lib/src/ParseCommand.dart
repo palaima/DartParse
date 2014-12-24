@@ -1,9 +1,4 @@
-import 'package:http/http.dart' as http;
-
-import "dart:async";
-
-import 'ParseConstant.dart';
-import 'ParseResponse.dart';
+part of dart_parse;
 
 abstract class ParseCommand {
 

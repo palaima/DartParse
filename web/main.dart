@@ -1,16 +1,25 @@
-import 'test.dart';
 import 'package:http/http.dart' as http;
 import 'package:json_object/json_object.dart';
+import 'package:logging/logging.dart';
 
 import "dart:async";
 import 'dart:convert';
 import 'dart:core';
 
-import 'ParseQuery.dart';
-import 'ParseResponse.dart';
-import 'ParseObject.dart';
+
+import 'package:dart_parse/dart_parse.dart';
+
+
+
 
 main() {
+
+  Logger.root.level = Level.ALL;
+  Logger.root.onRecord.listen((LogRecord rec) {
+    print('${rec.level.name}: ${rec.loggerName}: ${rec.time}: ${rec.message}');
+  });
+  final Logger log = new Logger('Main');
+
   int number = 1<<53;
   int test = 1<<2;
   print(number);
@@ -37,25 +46,25 @@ main() {
   ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("test");
   query
     ..whereEqualTo("","")
-    ..whereEqualTo("","");
-  query.find().then((List<ParseObject> results) {
-    results.forEach((ParseObject result) {
-      print("===============================================");
-      print("objectId: " + result.objectId);
-      print("createdAt: " + result.createdAt.toString());
-      print("updatedAt: " + result.updatedAt.toString());
-      if (result.has("array")) {
-        List array = result.getList("array");
-        array.forEach((val) {
-          print("value: $val");
+    ..whereEqualTo("","")
+    ..find().then((List<ParseObject> results) {
+      results.forEach((ParseObject result) {
+        log.fine("===============================================");
+        log.fine("objectId: " + result.objectId);
+        log.fine("createdAt: " + result.createdAt.toString());
+        log.fine("updatedAt: " + result.updatedAt.toString());
+        if (result.has("array")) {
+          List array = result.getList("array");
+          array.forEach((String val) {
+            log.fine("value: $val");
+          });
+        }
+        result.data.forEach((k,v) {
+          log.fine("$k: $v");
         });
-      }
-      result.data.forEach((k,v) {
-        print("$k: $v");
+        log.fine("===============================================");
       });
-      print("===============================================");
+      /*print("json " + result.getJsonObject().toString());
+      print("json " + json[0]);*/
     });
-    /*print("json " + result.getJsonObject().toString());
-    print("json " + json[0]);*/
-  });
 }

@@ -1,8 +1,0 @@
-class test {
-  hello() {
-
-  }
-
-  test() {
-  }
-}

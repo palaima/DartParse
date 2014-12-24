@@ -1,3 +1,5 @@
+part of dart_parse;
+
 class ParseException implements Error {
 
   static final int OTHER_CAUSE = -1;

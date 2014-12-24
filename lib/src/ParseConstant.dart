@@ -1,3 +1,5 @@
+part of dart_parse;
+
 class ParseConstant {
 
   static final String API_ENDPOINT = "https://api.parse.com";

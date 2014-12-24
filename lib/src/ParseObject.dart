@@ -1,7 +1,4 @@
-import 'Parse.dart';
-import 'operation/SetFieldOperation.dart';
-import 'operation/ParseFieldOperation.dart';
-import 'util/ParseDecoder.dart';
+part of dart_parse;
 
 class ParseObject {
   String endPoint;

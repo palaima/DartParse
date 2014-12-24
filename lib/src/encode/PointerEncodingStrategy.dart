@@ -1,6 +1,4 @@
-import 'PointerOrLocalIdEncodingStrategy.dart';
-import 'package:json_object/json_object.dart';
-import '../ParseObject.dart';
+part of dart_parse;
 
 class PointerEncodingStrategy extends PointerOrLocalIdEncodingStrategy {
   static final PointerEncodingStrategy instance = new PointerEncodingStrategy();

@@ -1,8 +1,4 @@
-import 'package:http/http.dart';
-import 'package:json_object/json_object.dart';
-
-import 'ParseException.dart';
-import 'dart:convert';
+part of dart_parse;
 
 class ParseResponse {
 
@@ -67,7 +63,7 @@ class ParseResponse {
     int code;
     String error;
 
-    try {
+    /*try {
       code = response.getInt(RESPONSE_CODE_JSON_KEY);
     }
     catch(JSONException e) {
@@ -79,7 +75,7 @@ class ParseResponse {
     }
     catch(JSONException e) {
       error = "Error undefinted by Parse server.";
-    }
+    }*/
 
     return new ParseException(code, error);
   }
