@@ -1,19 +1,18 @@
 part of dart_parse;
 
-class SetFieldOperation extends ParseFieldOperation {
-  Object value;
-
-  SetFieldOperation(this.value);
+class DeleteFieldOperation extends ParseFieldOperation {
 
   /**
    * @param oldValue dgads
    */
   Object apply(Object oldValue, ParseObject parseObject, String key) {
-    return value;
+    return null;
   }
 
   Object encode(ParseObjectEncodingStrategy objectEncoder) {
-    return ParseEncoder.encode(value, objectEncoder);
+    //Map output = new Map();
+    //output["__op"] = "Delete";
+    return {"__op" : "Delete"};
   }
 
 

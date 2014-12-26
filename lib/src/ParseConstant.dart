@@ -22,6 +22,6 @@ class ParseConstant {
 
   static int MAX_PARSE_FILE_SIZE = 10485760;
 
-  static String APPLICATION_ID = "elrYETs0EvHHvEsRa3Lq6HBWGZmWmrTYB9TfGBQ2";
-  static String REST_API_KEY = "7NRvJx23sChtJTlLsKUkwkrx8Ob79NnW4uXrzqyE";
+  static String APPLICATION_ID = "";
+  static String REST_API_KEY = "";
 }

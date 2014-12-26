@@ -1,6 +1,8 @@
 part of dart_parse;
 
 class ParseObject {
+  final Logger _log = new Logger("ParseObject");
+
   String endPoint;
   String objectId;
   String className;
@@ -27,55 +29,90 @@ class ParseObject {
   String get getClassName => className;
 
   DateTime getDate(String key) {
-    if (data.containsKey(key) && data[key] is DateTime) {
-      return data[key];
+    if (!data.containsKey(key)) {
+      return null;
     }
-    return null;
+    Object value = data[key];
+    if (!(value is DateTime)) {
+      _log.shout("called getDate(${key}) but the value is ${value.runtimeType}");
+      return null;
+    }
+    return value;
   }
 
   bool getBoolean(String key) {
-    if (data.containsKey(key) && data[key] is bool) {
-      return data[key];
+    if (!data.containsKey(key)) {
+      return null;
     }
-    return null;
+    Object value = data[key];
+    if (!(value is bool)) {
+      _log.shout("called getBoolean(${key}) but the value is ${value.runtimeType}");
+      return null;
+    }
+    return value;
   }
 
   num getNumber(String key) {
-    if (data.containsKey(key) && data[key] is num) {
-      return data[key];
+    if (!data.containsKey(key)) {
+      return null;
     }
-    return null;
+    Object value = data[key];
+    if (!(value is num)) {
+      _log.shout("called getNumber(${key}) but the value is ${value.runtimeType}");
+      return null;
+    }
+    return value;
   }
 
   int getInt(String key) {
-    if (data.containsKey(key) && data[key] is int) {
-      return data[key];
+    if (!data.containsKey(key)) {
+      return null;
     }
-    return null;
+    Object value = data[key];
+    if (!(value is int)) {
+      _log.shout("called getInt(${key}) but the value is ${value.runtimeType}");
+      return null;
+    }
+    return value;
   }
 
   double getDouble(String key) {
-    if (data.containsKey(key) && data[key] is double) {
-      return data[key];
+    if (!data.containsKey(key)) {
+      return null;
     }
-    return null;
+    Object value = data[key];
+    if (!(value is double)) {
+      _log.shout("called getDouble(${key}) but the value is ${value.runtimeType}");
+      return null;
+    }
+    return value;
   }
 
   String getString(String key) {
-    if (data.containsKey(key) && data[key] is String) {
-      return data[key];
+    if (!data.containsKey(key)) {
+      return null;
     }
-    return null;
+    Object value = data[key];
+    if (!(value is String)) {
+      _log.shout("called getString(${key}) but the value is ${value.runtimeType}");
+      return null;
+    }
+    return value;
   }
 
   List getList(String key) {
-    if (data.containsKey(key) && data[key] is List) {
-      return data[key];
+    if (!data.containsKey(key)) {
+      return null;
     }
-    return null;
+    Object value = data[key];
+    if (!(value is List)) {
+      _log.shout("called getList(${key}) but the value is ${value.runtimeType}");
+      return null;
+    }
+    return value;
   }
 
-  setData(Map result, [bool disableChecks]) {
+  setData(Map result, [bool disableChecks = false]) {
     result.forEach((key, value) {
       if(Parse.isInvalidKey(key)) {
         setReservedKey(key, value);
@@ -121,6 +158,22 @@ class ParseObject {
 
   }
 
+  remove(String key) {
+
+    if(has(key)) {
+      if(objectId != null) {
+        //if the object was saved before, we need to add the delete operation
+        operations[key] = new DeleteFieldOperation();
+      }
+      else {
+        operations.remove(key);
+      }
+      data.remove(key);
+      dirtyKeys.add(key);
+      isDirty = true;
+    }
+  }
+
   performOperation(String key, ParseFieldOperation operation) {
 
     //if field already exist, remove field and any pending operation for that field
@@ -131,12 +184,12 @@ class ParseObject {
 
     Object value = operation.apply(null, this, key);
     if (value != null) {
-      data.putIfAbsent(key, ()=> value);
+      data[key] = value;
     }
     else {
       data.remove(key);
     }
-    operations.putIfAbsent(key, ()=> operation);
+    operations[key] = operation;
     dirtyKeys.add(key);
     isDirty = true;
 
@@ -156,7 +209,7 @@ class ParseObject {
 
   clearData() {
     data.clear();
-    this.dirtyKeys.clear();
+    dirtyKeys.clear();
     operations.clear();
     isDirty = false;
     objectId = null;
@@ -174,5 +227,15 @@ class ParseObject {
 
   setEndPoint(String endPoint) {
     this.endPoint = endPoint;
+  }
+
+  save() {
+    if (!isDirty) {
+      return;
+    }
+
+    if (objectId == null) {
+
+    }
   }
 }

@@ -2,27 +2,32 @@ part of dart_parse;
 
 class ParseQuery<T extends ParseObject> {
 
-  final Logger log = new Logger("ParseQuery");
+  final Logger _log = new Logger("ParseQuery");
 
-  String endpoint;
-  String className;
-  int skip = 0;
-  int limit = -1;
-  Map<String, Object> where = new Map<String, Object>();
+  String _endpoint;
+  String _className;
+  int _skip = 0;
+  int _limit = -1;
+  String _order;
+  Map<String, Object> _where = new Map<String, Object>();
 
-  ParseQuery(this.className);
+  ParseQuery(this._className);
 
   whereEqualTo(String key, Object value) {
-    this.where.putIfAbsent(key, () => value);
+    _where[key] = value;
   }
 
   Future<T> get(String objectId) {
-    //whereEqualTo("objectId", objectId);
+    whereEqualTo("objectId", objectId);
 
     var completer = new Completer();
     find().then((List<T> results){
-      if (results.length > 0) {
+      if (results == null) {
+        completer.complete(null);
+      } else if (results.length > 0) {
         completer.complete(results[0]);
+      } else {
+        completer.complete(null);
       }
     });
 
@@ -33,13 +38,15 @@ class ParseQuery<T extends ParseObject> {
     if (query == null) {
       query = toRest();
     }
-    if (className != "users" && className != "roles") {
-      endpoint = "classes/" + className;
+    if (_className != "users" && _className != "roles") {
+      _endpoint = "classes/" + _className;
     } else {
-      endpoint = className;
+      _endpoint = _className;
     }
     var completer = new Completer();
-    ParseGetCommand command = new ParseGetCommand(endpoint);
+    ParseGetCommand command = new ParseGetCommand(_endpoint);
+    query.remove("className");
+    command.put("data", query);
     command.perform().then((ParseResponse response){
       if (!response.isFailed()) {
         if(response.getJsonObject() == null) {
@@ -48,26 +55,25 @@ class ParseQuery<T extends ParseObject> {
 
 
         List results = response.getJsonMap()["results"];
-        if(results.length == 0) {
-          completer.complete(null);
-          return;
-        }
         List<T> parseObjects = new List<T>();
-        results.forEach((Map resultMap) {
+        if(results.isEmpty) {
+          completer.complete(parseObjects);
+        } else {
+          results.forEach((Map resultMap) {
 
-          ParseObject parseObject = new ParseObject(className);
-          parseObject.setData(resultMap, false);
-          parseObjects.add(parseObject);
-
-          log.info(" result " + resultMap.toString());
-          int rez = resultMap["code"];
-          log.info("code: " + rez.toString());
-          resultMap.forEach((k,v) {
-            log.info("$k: $v");
+            ParseObject parseObject = new ParseObject(_className);
+            parseObject.setData(resultMap, false);
+            parseObjects.add(parseObject);
+            _log.info(" result " + resultMap.toString());
+            int rez = resultMap["code"];
+            _log.info("code: " + rez.toString());
+            resultMap.forEach((k,v) {
+              _log.info("$k: $v");
+            });
           });
-        });
+          completer.complete(parseObjects);
+        }
 
-        completer.complete(parseObjects);
       }
     });
 
@@ -75,27 +81,58 @@ class ParseQuery<T extends ParseObject> {
     return completer.future;
   }
 
+  ParseQuery<T> addAscendingOrder(String key) {
+    _orderASC(key);
+    return this;
+  }
+
+  ParseQuery<T> addDescendingOrder(String key) {
+    _orderDSC(key);
+    return this;
+  }
+  _orderDSC(String key) {
+    _orderASC("-" + key);
+  }
+
+  _orderASC(String key) {
+    if (_order == null)
+      _order = key;
+    else {
+      _order = (_order + ", " + key);
+    }
+  }
+
+  ParseQuery<T> limit(int newLimit) {
+    _limit = newLimit;
+    return this;
+  }
+
+  ParseQuery<T> skip(int newSkip) {
+    _skip = newSkip;
+    return this;
+  }
+
   JsonObject toRest() {
     JsonObject params = new JsonObject();
     try {
-      params.putIfAbsent("className", () => this.className);
+      params.putIfAbsent("className", () => _className);
 
-      if(this.where.length > 0) {
-        params.putIfAbsent("where", () => ParseEncoder.encode(this.where, PointerEncodingStrategy.get()));
+      if(_where.length > 0) {
+        params.putIfAbsent("where", () => ParseEncoder.encode(_where, PointerEncodingStrategy.get()));
       }
 
-      if (this.limit >= 0) {
-        params.putIfAbsent("limit", () => this.limit);
+      if (_limit >= 0) {
+        params.putIfAbsent("limit", () => _limit);
       }
 
-      if (this.skip > 0) {
-        params.putIfAbsent("skip", () => this.skip);
+      if (_skip > 0) {
+        params.putIfAbsent("skip", () => _skip);
       }
 
-     /* if (this.order != null) {
-        params.putIfAbsent("order", () => this.order);
+      if (_order != null) {
+        params.putIfAbsent("order", () => _order);
       }
-
+/*
       if (!this.include.isEmpty()) {
         params.putIfAbsent("include", () => Parse.join(this.include, ","));
       }
@@ -104,16 +141,12 @@ class ParseQuery<T extends ParseObject> {
         params.putIfAbsent("keys", () => Parse.join(this.selectedKeys, ","));
       }
 
-      if (this.trace) {
-        params.putIfAbsent("trace", () => "1");
-      }
-
       for (String key : this.extraOptions.keySet()) {
         params.putIfAbsent(key, () => ParseEncoder.encode(this.extraOptions.get(key), PointerEncodingStrategy.get()));
       }*/
 
     } on JsonObjectException catch (e) {
-      log.shout(e);
+      _log.shout(e);
     }
 
     return params;

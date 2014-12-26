@@ -3,7 +3,6 @@ import 'package:json_object/json_object.dart';
 import 'package:logging/logging.dart';
 
 import "dart:async";
-import 'dart:convert';
 import 'dart:core';
 
 
@@ -13,7 +12,7 @@ import 'package:dart_parse/dart_parse.dart';
 
 
 main() {
-/*
+
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((LogRecord rec) {
     print('${rec.level.name}: ${rec.loggerName}: ${rec.time}: ${rec.message}');
@@ -25,7 +24,7 @@ main() {
   print(number);
   print("hello");
 
-  String data = "{\"results\":[{\"name\":\"obdeleven\",\"version\":\"0.3.0\",\"version_code\":3000,\"createdAt\":\"2014-09-16T06:35:25.597Z\",\"updatedAt\":\"2014-10-10T17:04:11.300Z\",\"objectId\":\"bo0T7MXJdJ\"}, {\"name\":\"obdeleven\",\"version\":\"0.3.0\",\"version_code\":3000,\"createdAt\":\"2014-09-16T06:35:25.597Z\",\"updatedAt\":\"2014-10-10T17:04:11.300Z\",\"objectId\":\"bo0T7MXJdJ\"}]}";
+  /*String data = "{\"results\":[{\"name\":\"obdeleven\",\"version\":\"0.3.0\",\"version_code\":3000,\"createdAt\":\"2014-09-16T06:35:25.597Z\",\"updatedAt\":\"2014-10-10T17:04:11.300Z\",\"objectId\":\"bo0T7MXJdJ\"}, {\"name\":\"obdeleven\",\"version\":\"0.3.0\",\"version_code\":3000,\"createdAt\":\"2014-09-16T06:35:25.597Z\",\"updatedAt\":\"2014-10-10T17:04:11.300Z\",\"objectId\":\"bo0T7MXJdJ\"}]}";
   String data3 = "[1,2]";
   print(data);
   Map json = JSON.decode(data);
@@ -42,11 +41,14 @@ main() {
       });
     }
   });
-  print(data);
+  print(data);*/
+  ParseConstant.APPLICATION_ID = "elrYETs0EvHHvEsRa3Lq6HBWGZmWmrTYB9TfGBQ2";
+  ParseConstant.REST_API_KEY = "7NRvJx23sChtJTlLsKUkwkrx8Ob79NnW4uXrzqyE";
   ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("test");
   query
-    ..whereEqualTo("","")
-    ..whereEqualTo("","")
+    //..whereEqualTo("objectId","t2LtuexRoN")
+    //..whereEqualTo("code", 2)
+    ..addDescendingOrder("code")
     ..find().then((List<ParseObject> results) {
       results.forEach((ParseObject result) {
         log.fine("===============================================");
@@ -64,5 +66,5 @@ main() {
         });
         log.fine("===============================================");
       });
-    });*/
+    });
 }

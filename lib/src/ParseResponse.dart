@@ -2,6 +2,8 @@ part of dart_parse;
 
 class ParseResponse {
 
+  Logger _log = new Logger("ParseResponse");
+
   static final String RESPONSE_CODE_JSON_KEY = "code";
   static final String RESPONSE_ERROR_JSON_KEY = "error";
 
@@ -16,7 +18,7 @@ class ParseResponse {
     responseBody = response.body;
     contentLength = response.contentLength;
     headers = response.headers;
-    print(responseBody);
+    _log.info(responseBody);
   }
 
   bool isFailed() {
