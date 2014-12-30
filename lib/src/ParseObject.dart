@@ -238,6 +238,10 @@ class ParseObject {
       completer.complete(this);
       return completer.future;
     }
+   /*completer.completeError(new ParseException(ParseException.INVALID_JSON,
+   "Invalid response from Parse servers."));*/
+    throw new ParseException(ParseException.INVALID_JSON,
+    "Invalid response from Parse servers.");
 
     ParseCommand command;
     if(objectId == null) {

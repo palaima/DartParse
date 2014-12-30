@@ -1,6 +1,6 @@
 part of dart_parse;
 
-class ParseException implements Error {
+class ParseException implements Exception {
 
   static final int OTHER_CAUSE = -1;
   static final int INTERNAL_SERVER_ERROR = 1;
@@ -46,4 +46,8 @@ class ParseException implements Error {
   String message;
 
   ParseException(this.code, this.message);
+
+  String toString() {
+    return "Code: ${code.toString()} Message: ${message}";
+  }
 }

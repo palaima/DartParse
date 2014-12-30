@@ -49,7 +49,13 @@ main() {
   ParseObject test2 = new ParseObject("testNewClass");
   test2.put("name", "mantas")
     ..put("code", 1);
-  test2.save();
+  test2.save().catchError((e) {
+    log.info(e.toString());
+    return 42;
+  }).then((value) {
+    print("The value is $value");
+  }).whenComplete(() => print("Done!"));
+  //test2.delete();
 
   ParseObject test1 = new ParseObject("test");
   test1.put("name", "mantas")
