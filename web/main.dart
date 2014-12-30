@@ -46,6 +46,11 @@ main() {
   ParseConstant.REST_API_KEY = "7NRvJx23sChtJTlLsKUkwkrx8Ob79NnW4uXrzqyE";
 
 
+  ParseObject test2 = new ParseObject("testNewClass");
+  test2.put("name", "mantas")
+    ..put("code", 1);
+  test2.save();
+
   ParseObject test1 = new ParseObject("test");
   test1.put("name", "mantas")
   ..put("code", 1);
