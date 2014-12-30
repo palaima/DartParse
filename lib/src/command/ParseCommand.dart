@@ -9,18 +9,19 @@ abstract class ParseCommand {
 
   String getEndPoint();
   String getRequest();
-  bool addJson();
+  Future<Response> getClient(http.Client client, String url, Map header);
 
   Future<ParseResponse> perform() {
     var completer = new Completer();
-    String url = getUrl(getEndPoint() + getRequest());
+    String url = _getUrl(getEndPoint() + getRequest());
     _log.info(Uri.decodeQueryComponent(url));
-    var header = {ParseConstant.HEADER_APPLICATION_ID : ParseConstant.APPLICATION_ID,
+    Map header = {ParseConstant.HEADER_APPLICATION_ID : ParseConstant.APPLICATION_ID,
         ParseConstant.HEADER_REST_API_KEY : ParseConstant.REST_API_KEY};
-    if (addJson()) {
-      header.putIfAbsent(ParseConstant.HEADER_CONTENT_TYPE, () => ParseConstant.CONTENT_TYPE_JSON);
-    }
-    _client.get(url, headers : header).then((response){
+
+
+    //_client.send(new HttpRequest("GET", url, headers : header));
+    //_client.get(url, headers : header).then((response){
+    getClient(_client, url, header).then((response){
       completer.complete(new ParseResponse(response));
     }).whenComplete(_client.close())
     .catchError((handleFailure){
@@ -33,7 +34,7 @@ abstract class ParseCommand {
     _data[key] = value;
   }
 
-  String getUrl(String endpoint) {
+  String _getUrl(String endpoint) {
     return ParseConstant.API_ENDPOINT + "/" + ParseConstant.API_VERSION+ "/" + endpoint;
   }
 }

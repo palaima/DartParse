@@ -26,3 +26,6 @@ part 'src/encode/PointerEncodingStrategy.dart';
 part 'src/encode/PointerOrLocalIdEncodingStrategy.dart';
 part 'src/command/ParseCommand.dart';
 part 'src/command/ParseGetCommand.dart';
+part 'src/command/ParsePostCommand.dart';
+part 'src/command/ParsePutCommand.dart';
+part 'src/command/ParseDeleteCommand.dart';

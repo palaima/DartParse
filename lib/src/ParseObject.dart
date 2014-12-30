@@ -11,8 +11,8 @@ class ParseObject {
   Map operations = new Map();
   Map<String, Object> data = new Map();
 
-  DateTime updatedAt;
-  DateTime createdAt;
+  DateTime _updatedAt;
+  DateTime _createdAt;
 
   ParseObject(this.className) {
     setEndPoint("classes/" + className);
@@ -27,6 +27,8 @@ class ParseObject {
 
   String get getObjectId => objectId;
   String get getClassName => className;
+  DateTime get getUpdatedAt => _updatedAt;
+  DateTime get getCreatedAt => _createdAt;
 
   DateTime getDate(String key) {
     if (!data.containsKey(key)) {
@@ -127,7 +129,7 @@ class ParseObject {
     this.dirtyKeys.clear();
   }
 
-  put(String key, Object value, bool disableChecks){
+  ParseObject put(String key, Object value, [bool disableChecks = false]){
 
     if (key == null) {
       throw new ArgumentError("key may not be null.");
@@ -156,6 +158,7 @@ class ParseObject {
 
     performOperation(key, new SetFieldOperation(value));
 
+    return this;
   }
 
   remove(String key) {
@@ -200,10 +203,10 @@ class ParseObject {
       objectId = value.toString();
     }
     else if ("createdAt" == key) {
-      createdAt = Parse.parseDate(value.toString());
+      _createdAt = Parse.parseDate(value.toString());
     }
     else if ("updatedAt" == key) {
-      updatedAt = Parse.parseDate(value.toString());
+      _updatedAt = Parse.parseDate(value.toString());
     }
   }
 
@@ -213,8 +216,8 @@ class ParseObject {
     operations.clear();
     isDirty = false;
     objectId = null;
-    createdAt = null;
-    updatedAt = null;
+    _createdAt = null;
+    _updatedAt = null;
   }
 
   bool has(String key) {
@@ -229,13 +232,105 @@ class ParseObject {
     this.endPoint = endPoint;
   }
 
-  save() {
+  Future<ParseObject> save() {
+    var completer = new Completer();
     if (!isDirty) {
-      return;
+      completer.complete(this);
+      return completer.future;
     }
 
-    if (objectId == null) {
-
+    ParseCommand command;
+    if(objectId == null) {
+      command = new ParsePostCommand(endPoint);
     }
+    else {
+      command =  new ParsePutCommand(endPoint, objectId);
+    }
+
+    command.put("data", getParseData());
+
+
+    command.perform().then((ParseResponse response) {
+      if (!response.isFailed()) {
+        JsonObject jsonResponse = response.getJsonObject();
+        if (jsonResponse == null) {
+          throw response.getException();
+        }
+
+        if(objectId == null) {
+          objectId = jsonResponse[ParseConstant.FIELD_OBJECT_ID];
+          String createdAt = jsonResponse[ParseConstant.FIELD_CREATED_AT];
+          _createdAt = Parse.parseDate(createdAt);
+          _updatedAt = Parse.parseDate(createdAt);
+        }
+        else {
+          String updatedAt = jsonResponse[ParseConstant.FIELD_UPDATED_AT];
+          _updatedAt = Parse.parseDate(updatedAt);
+        }
+
+        this.isDirty = false;
+        this.operations.clear();
+        this.dirtyKeys.clear();
+        completer.complete(this);
+      }
+    });
+    return completer.future;
+  }
+
+  Future<bool> delete() {
+    var completer = new Completer();
+
+    if(objectId == null) {
+      completer.complete(true);
+      return completer.future;
+    }
+
+    ParseCommand command = new ParseDeleteCommand(endPoint, objectId);
+    command.perform().then((ParseResponse response) {
+      if(response.isFailed()) {
+        throw response.getException();
+      }
+
+      _updatedAt = null;
+      _createdAt = null;
+      objectId = null;
+      isDirty = false;
+      operations.clear();
+      dirtyKeys.clear();
+      completer.complete(true);
+    });
+
+
+
+    return completer.future;
+}
+
+  JsonObject getParseData() {
+    JsonObject parseData = new JsonObject();
+
+    operations.keys.forEach((String key) {
+      if(operations[key] is SetFieldOperation) {
+        parseData[key] = operations[key].encode(PointerEncodingStrategy.get());
+      }
+      /*else if(operations[key] is IncrementFieldOperation) {
+        parseData.put(key, operation.encode(PointerEncodingStrategy.get()));
+      }*/
+      else if(operations[key] is DeleteFieldOperation) {
+          parseData[key] = operations[key].encode(PointerEncodingStrategy.get());
+      }
+      /*else if(operations[key] is RelationOperation) {
+        parseData.put(key, operation.encode(PointerEncodingStrategy.get()));
+      }*/
+      else {
+        //here we deal will sub objects like ParseObject;
+        Object obj = data[key];
+        if(obj is ParseObject) {
+          parseData[key] = obj.getParseData();
+        }
+      }
+    });
+
+    _log.info("parse data " + parseData.toString());
+    return parseData;
   }
 }

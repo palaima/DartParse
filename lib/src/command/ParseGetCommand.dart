@@ -30,8 +30,8 @@ class ParseGetCommand extends ParseCommand {
     return endPoint + (objectId != null ? "/" + objectId : "");
   }
 
-  bool addJson() {
-    return false;
+  Future<Response> getClient(Client client, String url, Map header) {
+    return client.get(url, headers : header);
   }
 
 

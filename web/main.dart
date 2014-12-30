@@ -44,17 +44,23 @@ main() {
   print(data);*/
   ParseConstant.APPLICATION_ID = "elrYETs0EvHHvEsRa3Lq6HBWGZmWmrTYB9TfGBQ2";
   ParseConstant.REST_API_KEY = "7NRvJx23sChtJTlLsKUkwkrx8Ob79NnW4uXrzqyE";
-  ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("test");
-  query
+
+
+  ParseObject test1 = new ParseObject("test");
+  test1.put("name", "mantas")
+  ..put("code", 1);
+  test1.save().then((ParseObject parseObject) {
+    ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("test");
+    query
     //..whereEqualTo("objectId","t2LtuexRoN")
     //..whereEqualTo("code", 2)
-    ..addDescendingOrder("code")
-    ..find().then((List<ParseObject> results) {
+      ..addDescendingOrder("code")
+      ..find().then((List<ParseObject> results) {
       results.forEach((ParseObject result) {
         log.fine("===============================================");
         log.fine("objectId: " + result.objectId);
-        log.fine("createdAt: " + result.createdAt.toString());
-        log.fine("updatedAt: " + result.updatedAt.toString());
+        log.fine("createdAt: " + result.getUpdatedAt.toString());
+        log.fine("updatedAt: " + result.getUpdatedAt.toString());
         if (result.has("array")) {
           List array = result.getList("array");
           array.forEach((String val) {
@@ -67,4 +73,5 @@ main() {
         log.fine("===============================================");
       });
     });
+  });
 }
