@@ -6,7 +6,7 @@ class ParseObject {
   String endPoint;
   String objectId;
   String className;
-  bool isDirty = false;
+  bool isDirty = true;
   List<String> dirtyKeys = new List();
   Map operations = new Map();
   Map<String, Object> data = new Map();
@@ -21,7 +21,6 @@ class ParseObject {
   static ParseObject createWithoutData(String className, String objectId) {
     ParseObject result = new ParseObject(className);
     result.objectId = objectId;
-    result.isDirty = false;
     return result;
   }
 
@@ -238,10 +237,7 @@ class ParseObject {
       completer.complete(this);
       return completer.future;
     }
-   /*completer.completeError(new ParseException(ParseException.INVALID_JSON,
-   "Invalid response from Parse servers."));*/
-    throw new ParseException(ParseException.INVALID_JSON,
-    "Invalid response from Parse servers.");
+
 
     ParseCommand command;
     if(objectId == null) {
@@ -258,7 +254,8 @@ class ParseObject {
       if (!response.isFailed()) {
         JsonObject jsonResponse = response.getJsonObject();
         if (jsonResponse == null) {
-          throw response.getException();
+          completer.completeError(response.getException());
+          return;
         }
 
         if(objectId == null) {
@@ -277,7 +274,7 @@ class ParseObject {
         this.dirtyKeys.clear();
         completer.complete(this);
       }
-    });
+    }, onError: completer.completeError);
     return completer.future;
   }
 
@@ -291,20 +288,18 @@ class ParseObject {
 
     ParseCommand command = new ParseDeleteCommand(endPoint, objectId);
     command.perform().then((ParseResponse response) {
-      if(response.isFailed()) {
-        throw response.getException();
-      }
-
       _updatedAt = null;
       _createdAt = null;
       objectId = null;
       isDirty = false;
       operations.clear();
       dirtyKeys.clear();
-      completer.complete(true);
-    });
-
-
+      if(response.isFailed()) {
+        completer.completeError(response.getException());
+      } else {
+        completer.complete(true);
+      }
+    }, onError: completer.completeError);
 
     return completer.future;
 }
@@ -336,5 +331,16 @@ class ParseObject {
 
     _log.info("parse data " + parseData.toString());
     return parseData;
+  }
+
+  String toString() {
+    JsonObject object = new JsonObject();
+    object["objectId"] = objectId;
+    object["createdAt"] = _createdAt.toString();
+    object["updatedAt"] = _updatedAt.toString();
+    data.forEach((String key, var value) {
+      object[key] = value;
+    });
+    return object.toString();
   }
 }

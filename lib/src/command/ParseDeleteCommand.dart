@@ -16,8 +16,8 @@ class ParseDeleteCommand extends ParseCommand {
     return endPoint + (objectId != null ? "/" + objectId : "");
   }
 
-  Future<Response> getClient(http.Client client, String url, Map header) {
-    return client.delete(url, headers : header);
+  Future<Response> getClient(String url, Map header) {
+    return http.delete(url, headers : header);
   }
 
 }

@@ -9,7 +9,7 @@ abstract class ParseCommand {
 
   String getEndPoint();
   String getRequest();
-  Future<Response> getClient(http.Client client, String url, Map header);
+  Future<Response> getClient(String url, Map header);
 
   Future<ParseResponse> perform() {
     var completer = new Completer();
@@ -19,13 +19,11 @@ abstract class ParseCommand {
         ParseConstant.HEADER_REST_API_KEY : ParseConstant.REST_API_KEY};
 
 
-    //_client.send(new HttpRequest("GET", url, headers : header));
-    //_client.get(url, headers : header).then((response){
-    getClient(_client, url, header).then((response){
+    getClient(url, header).then((response){
       completer.complete(new ParseResponse(response));
-    }).whenComplete(_client.close())
-    .catchError((handleFailure){
+    }).catchError((handleFailure){
       _log.shout(handleFailure.toString());
+      completer.completeError(handleFailure);
     });
     return completer.future;
   }

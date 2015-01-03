@@ -5,7 +5,7 @@ main() {
 
   test('Query test', () {
     ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("test");
-    query.find().then(expectAsync((List<ParseObject> results){
+    query.find().then(expectAsync((List<ParseObject> results) {
       expect(results, hasLength(5));
     }));
   });

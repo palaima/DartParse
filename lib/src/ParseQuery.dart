@@ -18,18 +18,15 @@ class ParseQuery<T extends ParseObject> {
   }
 
   Future<T> get(String objectId) {
-    whereEqualTo("objectId", objectId);
-
     var completer = new Completer();
+    whereEqualTo("objectId", objectId);
     find().then((List<T> results){
-      if (results == null) {
+      if (results.isEmpty) {
         completer.complete(null);
-      } else if (results.length > 0) {
-        completer.complete(results[0]);
       } else {
-        completer.complete(null);
+        completer.complete(results[0]);
       }
-    });
+    }, onError: completer.completeError);
 
     return completer.future;
   }
@@ -50,7 +47,8 @@ class ParseQuery<T extends ParseObject> {
     command.perform().then((ParseResponse response){
       if (!response.isFailed()) {
         if(response.getJsonObject() == null) {
-          throw response.getException();
+          completer.completeError(response.getException());
+          return;
         }
 
 
@@ -64,17 +62,20 @@ class ParseQuery<T extends ParseObject> {
             ParseObject parseObject = new ParseObject(_className);
             parseObject.setData(resultMap, false);
             parseObjects.add(parseObject);
-            _log.info(" result " + resultMap.toString());
+            /*_log.info(" result " + resultMap.toString());
             int rez = resultMap["code"];
             _log.info("code: " + rez.toString());
             resultMap.forEach((k,v) {
               _log.info("$k: $v");
-            });
+            });*/
           });
           completer.complete(parseObjects);
         }
 
       }
+    }).catchError((error) {
+      _log.shout(error.toString());
+      completer.completeError(error);
     });
 
 

@@ -3,6 +3,7 @@ import 'package:unittest/unittest.dart';
 import 'package:dart_parse/dart_parse.dart';
 import 'package:logging/logging.dart';
 import 'query.dart' as query;
+import 'parse_object.dart' as parse_object;
 
 main() {
   useCompactVMConfiguration();
@@ -13,4 +14,5 @@ main() {
    // print('${rec.level.name}: ${rec.loggerName}: ${rec.time}: ${rec.message}');
   });
   query.main();
+  parse_object.main();
 }

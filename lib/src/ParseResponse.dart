@@ -21,22 +21,15 @@ class ParseResponse {
     _log.info(responseBody);
   }
 
-  bool isFailed() {
-    return hasConnectionFailed() || hasErrorCode();
-  }
+  bool isFailed() => hasConnectionFailed() || hasErrorCode();
 
   bool hasConnectionFailed() => responseBody == null;
 
   bool hasErrorCode() => response.statusCode < 200 || response.statusCode >= 300;
 
-  JsonObject getJsonObject(){
-    JsonObject object = new JsonObject.fromJsonString(responseBody);
-    return object;
-  }
+  JsonObject getJsonObject() => new JsonObject.fromJsonString(responseBody);
 
-  Map getJsonMap() {
-    return JSON.decode(responseBody);
-  }
+  Map getJsonMap() => JSON.decode(responseBody);
 
   ParseException getException() {
 
@@ -57,25 +50,23 @@ class ParseResponse {
       "Invalid response from Parse servers.");
     }
 
-    return getParseError(response);
+    return _getParseError(response);
   }
 
-  ParseException getParseError(JsonObject response) {
+  ParseException _getParseError(JsonObject response) {
 
     int code;
     String error;
 
     try {
-      code = response.getInt(RESPONSE_CODE_JSON_KEY);
-    }
-    catch(JSONException e) {
+      code = response[RESPONSE_CODE_JSON_KEY];
+    } on JsonObjectException catch(e) {
       code = ParseException.NOT_INITIALIZED;
     }
 
     try {
-      error = response.getString(RESPONSE_ERROR_JSON_KEY);
-    }
-    catch(JSONException e) {
+      error = response[RESPONSE_ERROR_JSON_KEY];
+    } on JsonObjectException catch(e) {
       error = "Error undefinted by Parse server.";
     }
 

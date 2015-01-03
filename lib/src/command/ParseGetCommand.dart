@@ -30,8 +30,8 @@ class ParseGetCommand extends ParseCommand {
     return endPoint + (objectId != null ? "/" + objectId : "");
   }
 
-  Future<Response> getClient(Client client, String url, Map header) {
-    return client.get(url, headers : header);
+  Future<Response> getClient(String url, Map header) {
+    return http.get(url, headers : header);
   }
 
 
