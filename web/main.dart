@@ -49,15 +49,13 @@ main() {
   ParseConstant.APPLICATION_ID = "elrYETs0EvHHvEsRa3Lq6HBWGZmWmrTYB9TfGBQ2";
   ParseConstant.REST_API_KEY = "7NRvJx23sChtJTlLsKUkwkrx8Ob79NnW4uXrzqyE";
 
-  //create(log);
+  create(log);
   //query(log);
 
   //test2.delete();
   //we2tuyhEDZ
   //getObject(log, "we2tuyhEDZ");
-  deleteObject(log, "we2tuyhEDZ");
-
-  log.info("The value is");
+  //deleteObject(log, "we2tuyhEDZ");
 
 }
 
@@ -84,8 +82,12 @@ deleteObject(Logger log, String id) {
 
 create(Logger log) {
   ParseObject test2 = new ParseObject("testNewClass");
-  test2.put("name", "mantas")
-    ..put("code", 1);
+  test2.put("date", new DateTime(1989, DateTime.NOVEMBER, 9));
+  test2.put("code", 1);
+  test2.put("list", [1,2,3]);
+  test2.put("list_string", ["1","car","3"]);
+  test2.put("list_double", [1.1, 2.2, 3.3]);
+  test2.put("list_boolean", [true, true, false]);
   test2.save().catchError((e) {
     log.info(e.toString());
     return 42;

@@ -8,7 +8,7 @@ class PointerEncodingStrategy extends PointerOrLocalIdEncodingStrategy {
   }
 
   JsonObject encodeRelatedObject(ParseObject object) {
-    if (object.getObjectId == null) {
+    if (object.objectId == null) {
       throw new ArgumentError(
           "unable to encode an association with an unsaved ParseObject");
     }

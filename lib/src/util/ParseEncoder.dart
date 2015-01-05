@@ -8,11 +8,18 @@ class ParseEncoder {
       return objectEncoder.encodeRelatedObject(value);
     }
 
+    if (value is DateTime) {
+      JsonObject json = new JsonObject();
+      json["__type"] = "Date";
+      json["iso"] = value.toIso8601String();
+      return json;
+    }
+
     if (value is List) {
       List list = value;
-      String data = "blabla";
+      List data = new List();
       list.forEach((val) {
-        _log.info(val + " gdsg");
+        data.add(encode(val, objectEncoder));
       });
       //JsonObject
       /*JSONObject output = new JSONObject();
@@ -28,9 +35,17 @@ class ParseEncoder {
       map.keys.forEach((key) {
         json.putIfAbsent(key, () => encode(map[key], objectEncoder));
       });
-      _log.info(json);
       return json;
     }
+
+    /*if (value is ParseObject) {
+      ParseObject object = value;
+      JsonObject json = new JsonObject();
+      json["__type"] = "Pointer";
+      json["className"] = object.className;
+      json["objectId"] = object.objectId;
+      return json;
+    }*/
 
     if(Parse.isValidType(value)) {
       return value;

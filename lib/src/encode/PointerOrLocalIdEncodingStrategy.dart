@@ -7,13 +7,13 @@ class PointerOrLocalIdEncodingStrategy extends ParseObjectEncodingStrategy {
   JsonObject encodeRelatedObject(ParseObject parseObject) {
     JsonObject json = new JsonObject();
     try {
-      if (parseObject.getObjectId != null) {
+      if (parseObject.objectId != null) {
         json.putIfAbsent("__type", () => "Pointer");
-        json.putIfAbsent("className", () => parseObject.getClassName);
-        json.putIfAbsent("objectId", () => parseObject.getObjectId);
+        json.putIfAbsent("className", () => parseObject.className);
+        json.putIfAbsent("objectId", () => parseObject.objectId);
       } else {
         json.putIfAbsent("__type", () => "Pointer");
-        json.putIfAbsent("className", () => parseObject.getClassName);
+        json.putIfAbsent("className", () => parseObject.className);
         json.putIfAbsent("localId", () => createTempId());
       }
     } on JsonObjectException catch (e) {

@@ -11,7 +11,7 @@ main() {
   ParseConstant.REST_API_KEY = "7NRvJx23sChtJTlLsKUkwkrx8Ob79NnW4uXrzqyE";
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((LogRecord rec) {
-   // print('${rec.level.name}: ${rec.loggerName}: ${rec.time}: ${rec.message}');
+    print('${rec.level.name}: ${rec.loggerName}: ${rec.time}: ${rec.message}');
   });
   query.main();
   parse_object.main();

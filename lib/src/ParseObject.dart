@@ -4,30 +4,30 @@ class ParseObject {
   final Logger _log = new Logger("ParseObject");
 
   String endPoint;
-  String objectId;
-  String className;
+  String _className;
   bool isDirty = true;
   List<String> dirtyKeys = new List();
   Map operations = new Map();
   Map<String, Object> data = new Map();
 
+  String _objectId;
   DateTime _updatedAt;
   DateTime _createdAt;
 
-  ParseObject(this.className) {
-    setEndPoint("classes/" + className);
+  ParseObject(this._className) {
+    setEndPoint("classes/" + _className);
   }
 
   static ParseObject createWithoutData(String className, String objectId) {
     ParseObject result = new ParseObject(className);
-    result.objectId = objectId;
+    result._objectId = objectId;
     return result;
   }
 
-  String get getObjectId => objectId;
-  String get getClassName => className;
-  DateTime get getUpdatedAt => _updatedAt;
-  DateTime get getCreatedAt => _createdAt;
+  String get className => _className;
+  String get objectId => _objectId;
+  DateTime get createdAt => _createdAt;
+  DateTime get updatedAt => _updatedAt;
 
   DateTime getDate(String key) {
     if (!data.containsKey(key)) {
@@ -199,7 +199,7 @@ class ParseObject {
 
   setReservedKey(String key, Object value) {
     if ("objectId" == key) {
-      objectId = value.toString();
+      _objectId = value.toString();
     }
     else if ("createdAt" == key) {
       _createdAt = Parse.parseDate(value.toString());
@@ -214,7 +214,7 @@ class ParseObject {
     dirtyKeys.clear();
     operations.clear();
     isDirty = false;
-    objectId = null;
+    _objectId = null;
     _createdAt = null;
     _updatedAt = null;
   }
@@ -251,15 +251,11 @@ class ParseObject {
 
 
     command.perform().then((ParseResponse response) {
-      if (!response.isFailed()) {
-        JsonObject jsonResponse = response.getJsonObject();
-        if (jsonResponse == null) {
-          completer.completeError(response.getException());
-          return;
-        }
+      JsonObject jsonResponse = response.getJsonObject();
+      if (!response.isFailed() && jsonResponse != null) {
 
         if(objectId == null) {
-          objectId = jsonResponse[ParseConstant.FIELD_OBJECT_ID];
+          _objectId = jsonResponse[ParseConstant.FIELD_OBJECT_ID];
           String createdAt = jsonResponse[ParseConstant.FIELD_CREATED_AT];
           _createdAt = Parse.parseDate(createdAt);
           _updatedAt = Parse.parseDate(createdAt);
@@ -273,6 +269,8 @@ class ParseObject {
         this.operations.clear();
         this.dirtyKeys.clear();
         completer.complete(this);
+      } else {
+        completer.completeError(response.getException());
       }
     }, onError: completer.completeError);
     return completer.future;
@@ -290,7 +288,7 @@ class ParseObject {
     command.perform().then((ParseResponse response) {
       _updatedAt = null;
       _createdAt = null;
-      objectId = null;
+      _objectId = null;
       isDirty = false;
       operations.clear();
       dirtyKeys.clear();
@@ -339,7 +337,11 @@ class ParseObject {
     object["createdAt"] = _createdAt.toString();
     object["updatedAt"] = _updatedAt.toString();
     data.forEach((String key, var value) {
-      object[key] = value;
+      if (value is DateTime) {
+        object[key] = value.toString();
+      } else {
+        object[key] = value;
+      }
     });
     return object.toString();
   }

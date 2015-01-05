@@ -17,15 +17,13 @@ class Parse {
     || ((value is String))
     || ((value is num))
     || ((value is bool))
-    || (value == null)
     || ((value is ParseObject))
-    // || ((value instanceof ParseACL))
-    /*|| ((value instanceof ParseFile))
+    //TODO
+    /* || ((value instanceof ParseACL))
+    || ((value instanceof ParseFile))
     || ((value instanceof ParseRelation))
-    || ((value instanceof ParseGeoPoint))
-    || ((value instanceof Date))
-    || ((value instanceof byte[]))
-    || ((value instanceof List))*/
+    || ((value instanceof ParseGeoPoint))*/
+    || ((value is DateTime))
     || ((value is Map));
   }
 }
