@@ -395,7 +395,69 @@ class ParseObject {
     }, onError: completer.completeError);
 
     return completer.future;
-}
+  }
+
+  //TODO tests
+  Future<ParseObject> fetch() {
+    var completer = new Completer();
+    if(objectId == null) {
+      completer.complete(this);
+      return completer.future;
+    }
+
+    ParseCommand command = new ParseGetCommand(endPoint, objectId);
+    command.perform().then((ParseResponse response) {
+      JsonObject jsonResponse = response.getJsonObject();
+      if (!response.isFailed() && jsonResponse != null) {
+        completer.complete(parseData(jsonResponse));
+      } else {
+        completer.completeError(response.getException());
+      }
+    }, onError: completer.completeError);
+    return completer.future;
+  }
+
+  ParseObject parseData(JsonObject jsonObject) {
+
+    ParseObject po = new ParseObject(className);
+
+    jsonObject.keys.forEach((String key) {
+      Object obj = jsonObject[key];
+      if(obj is JsonObject ){
+        JsonObject o = obj;
+        String type = o["__type"];
+
+        if("Date" == type) {
+          DateTime date = Parse.parseDate(o["iso"]);
+          po.put(key, date);
+        }
+        if("Bytes" == type) {
+          String base64 = o["base64"];
+          po.put(key, base64);
+        }
+        if("GeoPoint" == type) {
+          ParseGeoPoint gp = new ParseGeoPoint(o["latitude"], o["longitude"]);
+          po.put(key, gp);
+        }
+        if("File" == type) {
+          ParseFile file = new ParseFile(o["name"], url : o["url"]);
+          po.put(key, file);
+        }
+        if("Pointer" == type) {
+
+        }
+      } else {
+        if(Parse.isInvalidKey(key)) {
+          setReservedKey(key, obj);
+        }
+        else {
+          put(key, ParseDecoder.decode(obj));
+        }
+      }
+    });
+    po.isDirty = false;
+    return po;
+  }
 
   JsonObject getParseData() {
     JsonObject parseData = new JsonObject();
