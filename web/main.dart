@@ -81,19 +81,27 @@ deleteObject(Logger log, String id) {
 }
 
 create(Logger log) {
-  ParseObject test2 = new ParseObject("testNewClass");
-  test2.put("date", new DateTime(1989, DateTime.NOVEMBER, 9));
-  test2.put("code", 1);
-  test2.put("list", [1,2,3]);
-  test2.put("list_string", ["1","car","3"]);
-  test2.put("list_double", [1.1, 2.2, 3.3]);
-  test2.put("list_boolean", [true, true, false]);
-  test2.save().catchError((e) {
+  ParseObject relation = new ParseObject("relationTestClass");
+  relation.put("data", 55);
+  relation.save().then((ParseObject object) {
+    ParseObject test2 = new ParseObject("testNewClass");
+    test2.put("date", new DateTime(1989, DateTime.NOVEMBER, 9));
+    test2.put("code", 1);
+    test2.put("list", [1,2,3]);
+    test2.put("list_string", ["1","car","3"]);
+    test2.put("list_double", [1.1, 2.2, 3.3]);
+    test2.put("list_boolean", [true, true, false]);
+    test2.put("relation", object);
+    return test2.save();
+  }).then((ParseObject object){
+    log.info("retrieved " + object.getParseObject("relation").toString());
+  }).catchError((e) {
     log.info(e.toString());
     return 42;
   }).then((value) {
     log.info("The value is $value");
   }).whenComplete(() => log.info("Done!"));
+
 }
 
 query(Logger log) {

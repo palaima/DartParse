@@ -113,6 +113,18 @@ class ParseObject {
     return value;
   }
 
+  ParseObject getParseObject(String key) {
+    if (!data.containsKey(key)) {
+      return null;
+    }
+    Object value = data[key];
+    if (!(value is ParseObject)) {
+      _log.shout("called getParseObject(${key}) but the value is ${value.runtimeType}");
+      return null;
+    }
+    return value;
+  }
+
   setData(Map result, [bool disableChecks = false]) {
     result.forEach((key, value) {
       if(Parse.isInvalidKey(key)) {
@@ -338,6 +350,8 @@ class ParseObject {
     object["updatedAt"] = _updatedAt.toString();
     data.forEach((String key, var value) {
       if (value is DateTime) {
+        object[key] = value.toString();
+      } else if (value is ParseObject) {
         object[key] = value.toString();
       } else {
         object[key] = value;

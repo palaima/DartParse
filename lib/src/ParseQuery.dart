@@ -45,33 +45,21 @@ class ParseQuery<T extends ParseObject> {
     query.remove("className");
     command.put("data", query);
     command.perform().then((ParseResponse response){
-      if (!response.isFailed()) {
-        if(response.getJsonObject() == null) {
-          completer.completeError(response.getException());
-          return;
-        }
-
-
+      if (!response.isFailed() && response.getJsonObject() != null) {
         List results = response.getJsonMap()["results"];
         List<T> parseObjects = new List<T>();
         if(results.isEmpty) {
           completer.complete(parseObjects);
         } else {
           results.forEach((Map resultMap) {
-
             ParseObject parseObject = new ParseObject(_className);
             parseObject.setData(resultMap, false);
             parseObjects.add(parseObject);
-            /*_log.info(" result " + resultMap.toString());
-            int rez = resultMap["code"];
-            _log.info("code: " + rez.toString());
-            resultMap.forEach((k,v) {
-              _log.info("$k: $v");
-            });*/
           });
           completer.complete(parseObjects);
         }
-
+      } else {
+        completer.completeError(response.getException());
       }
     }).catchError((error) {
       _log.shout(error.toString());

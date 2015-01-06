@@ -3,13 +3,13 @@ import 'package:unittest/unittest.dart';
 
 main() {
 
-  test('Query test', () {
+ /* test('Query test', () {
     ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("test");
     query.find().then(expectAsync((List<ParseObject> results) {
       expect(results, hasLength(5));
     }));
   });
-
+*/
   test('Addition test', () {
     expect(2 + 2, equals(4));
   });

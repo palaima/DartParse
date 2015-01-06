@@ -1,8 +1,9 @@
 import 'package:dart_parse/dart_parse.dart';
 import 'package:unittest/unittest.dart';
+import 'dart:async';
 
 main() {
-  group('create update detele object and primityve fields', () {
+  group('object create update detele and primityve fields', () {
     ParseObject object = new ParseObject("test");
     test('int isNotNull', () {
       object.put("int",55);
@@ -104,6 +105,55 @@ main() {
     test('updatedAt isNull', () {
       expect(object.updatedAt, isNull);
     });
+  });
+
+  group('object relations', () {
+    test('single pointer', () {
+      ParseObject child = new ParseObject("child");
+      child.put("string", "text");
+      child.save().then(expectAsync((ParseObject child) {
+        expect(child.objectId, isNotNull);
+        expect(child.getString("string"), "text");
+        ParseObject parent = new ParseObject("test");
+        parent.put("int", 55);
+        parent.put("single_relation", child);
+        return parent.save();
+      })).then(expectAsync((ParseObject parent){
+        expect(parent.objectId, isNotNull);
+        expect(parent.getInt("int"), 55);
+        expect(parent.getParseObject("single_relation").getString("string"), "text");
+        return parent.getParseObject("single_relation").delete().then(expectAsync((bool deleted) {
+          expect(deleted, isTrue);
+          return parent.delete();
+        }));
+      })).then(expectAsync((bool deleted) {
+        expect(deleted, isTrue);
+      }));
+    });
+  });
+
+  test('multiple pointer', () {
+    ParseObject child1 = new ParseObject("child");
+    child1.put("string", "text1");
+    ParseObject child2 = new ParseObject("child");
+    child2.put("string", "text2");
+    ParseObject child3 = new ParseObject("child");
+    child3.put("string", "text3");
+    List list = [child1, child2, child3];
+    Future.wait([child1.save(), child2.save(), child3.save()]).then((_) {
+      ParseObject parent = new ParseObject("test");
+      parent.put("int", 55);
+      parent.put("multiple_relation", list);
+      return parent.save();
+    }).then(expectAsync((ParseObject parent) {
+      expect(parent.getList("multiple_relation"), list);
+      expect(parent.getInt("int"), 55);
+      return Future.wait([child1.delete(), child2.delete(), child3.delete(), parent.delete()]);
+    })).then(expectAsync((List<bool> deleted) {
+      expect(deleted, [true, true, true, true]);
+    }));
+
+
   });
 
 
