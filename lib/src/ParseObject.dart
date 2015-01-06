@@ -155,6 +155,18 @@ class ParseObject {
     return value;
   }
 
+  ParseGeoPoint getParseGeoPoint(String key) {
+    if (!data.containsKey(key)) {
+      return null;
+    }
+    Object value = data[key];
+    if (!(value is ParseGeoPoint)) {
+      _log.shout("called getParseGeoPoint(${key}) but the value is ${value.runtimeType}");
+      return null;
+    }
+    return value;
+  }
+
   setData(Map result, [bool disableChecks = false]) {
     result.forEach((key, value) {
       if(Parse.isInvalidKey(key)) {

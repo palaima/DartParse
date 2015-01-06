@@ -17,6 +17,15 @@ class ParseEncoder {
       return json;
     }
 
+    if (value is ParseGeoPoint) {
+      ParseGeoPoint point = value;
+      JsonObject json = new JsonObject();
+      json["__type"] = "GeoPoint";
+      json["latitude"] = point.latitude;
+      json["longitude"] = point.longitude;
+      return json;
+    }
+
     if (value is DateTime) {
       DateTime date = value;
       JsonObject json = new JsonObject();

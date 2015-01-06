@@ -22,19 +22,12 @@ class ParseDecoder {
       if (typeString == "File") {
         return new ParseFile(map["name"], url: map["url"]);
       }
-      /*
 
-      if (typeString.equals("GeoPoint")) {
-        double latitude, longitude;
-        try {
-          latitude = jsonObject.getDouble("latitude");
-          longitude = jsonObject.getDouble("longitude");
-        } catch (JSONException e) {
-          throw new RuntimeException(e);
-        }
-        return new ParseGeoPoint(latitude, longitude);
+
+      if (typeString == "GeoPoint") {
+        return new ParseGeoPoint(map["latitude"], map["longitude"]);
       }
-
+/*
       if (typeString.equals("Relation")) {
         return new ParseRelation(jsonObject);
       }*/

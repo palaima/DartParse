@@ -19,10 +19,10 @@ class Parse {
     || ((value is bool))
     || ((value is ParseObject))
     //TODO
-    /* || ((value instanceof ParseACL))
-    || ((value instanceof ParseFile))
-    || ((value instanceof ParseRelation))
-    || ((value instanceof ParseGeoPoint))*/
+    // || ((value instanceof ParseACL))
+    || ((value is ParseFile))
+    //|| ((value instanceof ParseRelation))
+    || ((value is ParseGeoPoint))
     || ((value is DateTime))
     || ((value is Map));
   }

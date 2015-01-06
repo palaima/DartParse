@@ -15,6 +15,7 @@ part 'src/ParseConstant.dart';
 part 'src/ParseException.dart';
 part 'src/ParseQuery.dart';
 part 'src/ParseFile.dart';
+part 'src/ParseGeoPoint.dart';
 part 'src/ParseResponse.dart';
 part 'src/Parse.dart';
 part 'src/util/ParseDecoder.dart';
