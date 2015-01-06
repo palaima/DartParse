@@ -182,6 +182,48 @@ class ParseObject {
     this.dirtyKeys.clear();
   }
 
+  ParseObject add(String key, Object value) {
+    return addAll(key, [value]);
+  }
+
+  ParseObject addAll(String key, List values) {
+    AddOperation operation = new AddOperation(values);
+    performOperation(key, operation);
+    return this;
+  }
+
+  ParseObject addUnique(String key, Object value) {
+    return addAllUnique(key, [value]);
+  }
+
+  ParseObject addAllUnique(String key, List values) {
+    AddUniqueOperation operation = new AddUniqueOperation(values);
+    performOperation(key, operation);
+    return this;
+  }
+
+  ParseObject removeAll(String key, List values) {
+    RemoveOperation operation = new RemoveOperation(values);
+    performOperation(key, operation);
+    return this;
+  }
+
+  ParseObject decrement(String key, [num amount = -1]) {
+    return increment(key, amount);
+  }
+
+  ParseObject increment(String key, [num amount = 1]) {
+    if (!amount.isNegative) amount = -amount;
+    IncrementOperation operation = new IncrementOperation(amount);
+    Object oldValue = data[key];
+    Object newValue = operation.apply(oldValue, this, key);
+    data[key] = newValue;
+    operations[key] = operation;
+    dirtyKeys.add(key);
+    isDirty = true;
+    return this;
+  }
+
   ParseObject put(String key, Object value, [bool disableChecks = false]){
 
     if (key == null) {
@@ -208,7 +250,7 @@ class ParseObject {
       throw new ArgumentError("invalid type for value: " + value.runtimeType.toString());
     }
 
-    performOperation(key, new SetFieldOperation(value));
+    performOperation(key, new SetOperation(value));
 
     return this;
   }
@@ -218,7 +260,7 @@ class ParseObject {
     if(has(key)) {
       if(objectId != null) {
         //if the object was saved before, we need to add the delete operation
-        operations[key] = new DeleteFieldOperation();
+        operations[key] = new DeleteOperation();
       }
       else {
         operations.remove(key);
@@ -359,13 +401,13 @@ class ParseObject {
     JsonObject parseData = new JsonObject();
 
     operations.keys.forEach((String key) {
-      if(operations[key] is SetFieldOperation) {
+      if(operations[key] is SetOperation) {
         parseData[key] = operations[key].encode(PointerEncodingStrategy.get());
       }
-      /*else if(operations[key] is IncrementFieldOperation) {
-        parseData.put(key, operation.encode(PointerEncodingStrategy.get()));
-      }*/
-      else if(operations[key] is DeleteFieldOperation) {
+      else if(operations[key] is IncrementOperation) {
+        parseData[key] = operations[key].encode(PointerEncodingStrategy.get());
+      }
+      else if(operations[key] is DeleteOperation) {
           parseData[key] = operations[key].encode(PointerEncodingStrategy.get());
       }
       /*else if(operations[key] is RelationOperation) {

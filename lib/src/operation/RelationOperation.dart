@@ -1,13 +1,10 @@
 part of dart_parse;
 
-class SetFieldOperation extends ParseFieldOperation {
+class RelationOperation extends ParseFieldOperation {
   Object value;
 
-  SetFieldOperation(this.value);
+  RelationOperation(this.value);
 
-  /**
-   * @param oldValue dgads
-   */
   Object apply(Object oldValue, ParseObject parseObject, String key) {
     return value;
   }
