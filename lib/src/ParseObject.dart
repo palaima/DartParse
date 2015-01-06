@@ -24,6 +24,24 @@ class ParseObject {
     return result;
   }
 
+  //TODO batch
+  static Future<List<ParseObject>> saveAll(List<ParseObject> objects) {
+    List<Future<ParseObject>> futures;
+    objects.forEach((ParseObject object) {
+      futures.add(object.save());
+    });
+    return Future.wait(futures);
+  }
+
+  //TODO batch
+  static Future<List<bool>> deleteAll(List<ParseObject> objects) {
+    List<Future<bool>> futures;
+    objects.forEach((ParseObject object) {
+      futures.add(object.delete());
+    });
+    return Future.wait(futures);
+  }
+
   String get className => _className;
   String get objectId => _objectId;
   DateTime get createdAt => _createdAt;
@@ -125,6 +143,18 @@ class ParseObject {
     return value;
   }
 
+  ParseFile getParseFile(String key) {
+    if (!data.containsKey(key)) {
+      return null;
+    }
+    Object value = data[key];
+    if (!(value is ParseFile)) {
+      _log.shout("called getParseFile(${key}) but the value is ${value.runtimeType}");
+      return null;
+    }
+    return value;
+  }
+
   setData(Map result, [bool disableChecks = false]) {
     result.forEach((key, value) {
       if(Parse.isInvalidKey(key)) {
@@ -154,10 +184,9 @@ class ParseObject {
       throw new ArgumentError("ParseFile must be saved before being set on a ParseObject.");
     }
 
-    /*if (value instanceof ParseFile && !((ParseFile) value).isUploaded() && !disableChecks) {
-    throw new IllegalArgumentException(
-    "ParseFile must be saved before being set on a ParseObject.");
-    }*/
+    if (value is ParseFile && !value.isDirty && !disableChecks) {
+      throw new ArgumentError("ParseFile must be saved before being set on a ParseObject.");
+    }
 
     if (Parse.isInvalidKey(key)) {
       throw new ArgumentError("reserved value for key: " + key);

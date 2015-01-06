@@ -19,10 +19,10 @@ class ParseDecoder {
         return _decodePointer(map["className"],map["objectId"]);
       }
 
-      /*if (typeString.equals("File")) {
-        return new ParseFile(jsonObject.optString("name"),
-        jsonObject.optString("url"));
+      if (typeString == "File") {
+        return new ParseFile(map["name"], url: map["url"]);
       }
+      /*
 
       if (typeString.equals("GeoPoint")) {
         double latitude, longitude;

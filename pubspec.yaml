@@ -12,3 +12,4 @@ dev_dependencies:
 dependencies:
   http: any
   json_object: any
+  mime_type: any

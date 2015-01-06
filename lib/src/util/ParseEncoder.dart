@@ -8,10 +8,20 @@ class ParseEncoder {
       return objectEncoder.encodeRelatedObject(value);
     }
 
+    if (value is ParseFile) {
+      ParseFile file = value;
+      JsonObject json = new JsonObject();
+      json["__type"] = "File";
+      json["name"] = file.name;
+      json["url"] = file.url;
+      return json;
+    }
+
     if (value is DateTime) {
+      DateTime date = value;
       JsonObject json = new JsonObject();
       json["__type"] = "Date";
-      json["iso"] = value.toIso8601String();
+      json["iso"] = date.toIso8601String();
       return json;
     }
 
@@ -21,10 +31,6 @@ class ParseEncoder {
       list.forEach((val) {
         data.add(encode(val, objectEncoder));
       });
-      //JsonObject
-      /*JSONObject output = new JSONObject();
-      output.put("__type", "Bytes");
-      output.put("base64", Base64.encodeBase64String(bytes));*/
       return data;
     }
 
