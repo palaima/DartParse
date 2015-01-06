@@ -26,7 +26,7 @@ class ParseObject {
 
   //TODO batch
   static Future<List<ParseObject>> saveAll(List<ParseObject> objects) {
-    List<Future<ParseObject>> futures;
+    List<Future<ParseObject>> futures = new List();
     objects.forEach((ParseObject object) {
       futures.add(object.save());
     });
@@ -35,7 +35,7 @@ class ParseObject {
 
   //TODO batch
   static Future<List<bool>> deleteAll(List<ParseObject> objects) {
-    List<Future<bool>> futures;
+    List<Future<bool>> futures = new List();
     objects.forEach((ParseObject object) {
       futures.add(object.delete());
     });

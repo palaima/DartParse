@@ -140,7 +140,7 @@ main() {
     ParseObject child3 = new ParseObject("child");
     child3.put("string", "text3");
     List list = [child1, child2, child3];
-    Future.wait([child1.save(), child2.save(), child3.save()]).then((_) {
+    ParseObject.saveAll([child1, child2, child3]).then((_) {
       ParseObject parent = new ParseObject("test");
       parent.put("int", 55);
       parent.put("multiple_relation", list);
@@ -148,7 +148,7 @@ main() {
     }).then(expectAsync((ParseObject parent) {
       expect(parent.getList("multiple_relation"), list);
       expect(parent.getInt("int"), 55);
-      return Future.wait([child1.delete(), child2.delete(), child3.delete(), parent.delete()]);
+      return ParseObject.deleteAll([child1, child2, child3, parent]);
     })).then(expectAsync((List<bool> deleted) {
       expect(deleted, [true, true, true, true]);
     }));
