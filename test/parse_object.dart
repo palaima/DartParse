@@ -140,7 +140,7 @@ main() {
     ParseObject child3 = new ParseObject("child");
     child3.put("string", "text3");
     List list = [child1, child2, child3];
-    ParseObject.saveAll([child1, child2, child3]).then((_) {
+    ParseObject.saveAll(list).then((_) {
       ParseObject parent = new ParseObject("test");
       parent.put("int", 55);
       parent.put("multiple_relation", list);
